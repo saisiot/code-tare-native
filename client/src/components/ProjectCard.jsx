@@ -195,9 +195,9 @@ export default function ProjectCard({ project, tagColors, onOpenTagEditor }) {
         <button
           onClick={() => openProject('claude')}
           className="flex-1 min-w-[80px] bg-purple-500 text-white px-2 py-1 rounded text-xs hover:bg-purple-600 transition-colors"
-          title="Claude Code로 열기"
+          title="터미널로 열기"
         >
-          🤖 Claude
+          💻 터미널
         </button>
         <button
           onClick={() => openProject('vscode')}
