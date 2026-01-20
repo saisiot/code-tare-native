@@ -45,11 +45,17 @@ impl Default for AppSettings {
 }
 
 fn get_settings_file() -> PathBuf {
-    let data_dir = PathBuf::from("data");
-    if !data_dir.exists() {
-        fs::create_dir_all(&data_dir).ok();
+    // macOS Application Support 디렉토리 사용 (쓰기 가능)
+    let app_data_dir = dirs::data_local_dir()
+        .unwrap_or_else(|| PathBuf::from("."))
+        .join("com.tare.code-tare")
+        .join("data");
+
+    if !app_data_dir.exists() {
+        fs::create_dir_all(&app_data_dir).ok();
     }
-    data_dir.join("settings.json")
+
+    app_data_dir.join("settings.json")
 }
 
 pub fn load_settings() -> AppSettings {

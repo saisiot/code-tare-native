@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -62,12 +62,17 @@ const TAILWIND_COLORS: &[&str] = &[
 ];
 
 fn get_data_dir() -> PathBuf {
-    // 프로젝트 루트의 data 디렉토리 사용
-    let data_dir = PathBuf::from("data");
-    if !data_dir.exists() {
-        fs::create_dir_all(&data_dir).ok();
+    // macOS Application Support 디렉토리 사용 (쓰기 가능)
+    let app_data_dir = dirs::data_local_dir()
+        .unwrap_or_else(|| PathBuf::from("."))
+        .join("com.tare.code-tare")
+        .join("data");
+
+    if !app_data_dir.exists() {
+        fs::create_dir_all(&app_data_dir).ok();
     }
-    data_dir
+
+    app_data_dir
 }
 
 fn get_project_tags_file() -> PathBuf {

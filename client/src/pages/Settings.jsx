@@ -15,6 +15,7 @@ export default function Settings() {
   const [customEditor, setCustomEditor] = useState('');
   const [showCustomTerminal, setShowCustomTerminal] = useState(false);
   const [showCustomEditor, setShowCustomEditor] = useState(false);
+  const [newFolder, setNewFolder] = useState('');
 
   useEffect(() => {
     loadSettings();
@@ -96,6 +97,18 @@ export default function Settings() {
       console.error('Error selecting folder:', error);
       alert('폴더 선택 중 오류가 발생했습니다: ' + error.message);
     }
+  }
+
+  function handleAddExcludedFolder() {
+    const folder = newFolder.trim();
+    if (folder && !excludedFolders.includes(folder)) {
+      setExcludedFolders([...excludedFolders, folder]);
+      setNewFolder('');
+    }
+  }
+
+  function handleRemoveExcludedFolder(index) {
+    setExcludedFolders(excludedFolders.filter((_, i) => i !== index));
   }
 
   async function handleSave() {
@@ -221,6 +234,50 @@ export default function Settings() {
           <p className="text-sm text-gray-500 mt-2">
             VS Code 버튼을 눌렀을 때 실행할 커맨드 (PATH에 등록된 커맨드)
           </p>
+        </div>
+
+        {/* 제외 폴더 */}
+        <div className="border-t pt-6">
+          <h3 className="font-medium mb-4">스캔 제외 폴더</h3>
+          <p className="text-sm text-gray-500 mb-3">
+            프로젝트 스캔 시 제외할 폴더 이름 (예: node_modules, .git)
+          </p>
+          <div className="flex gap-2 mb-3">
+            <input
+              type="text"
+              value={newFolder}
+              onChange={(e) => setNewFolder(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' && newFolder.trim()) {
+                  handleAddExcludedFolder();
+                }
+              }}
+              placeholder="폴더 이름 입력"
+              className="flex-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              onClick={handleAddExcludedFolder}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            >
+              추가
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {excludedFolders.map((folder, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-1 px-3 py-1 bg-gray-100 rounded-full text-sm"
+              >
+                <span>{folder}</span>
+                <button
+                  onClick={() => handleRemoveExcludedFolder(index)}
+                  className="ml-1 text-gray-500 hover:text-red-500 transition-colors"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* 표시 옵션 */}

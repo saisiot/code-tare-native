@@ -171,9 +171,12 @@ export default function Dashboard() {
           p.name === projectName ? { ...p, tags } : p
         ));
         handleCloseTagEditor();
+      } else {
+        alert(`태그 저장 실패: ${data.message || '알 수 없는 오류'}`);
       }
     } catch (error) {
       console.error('Error saving tags:', error);
+      alert(`태그 저장 중 오류 발생: ${error}`);
     }
   }
 

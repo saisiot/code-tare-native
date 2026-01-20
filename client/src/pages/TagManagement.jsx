@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { invoke } from '@tauri-apps/api/core';
 
 export default function TagManagement() {
   const navigate = useNavigate();
@@ -18,14 +19,19 @@ export default function TagManagement() {
 
   async function fetchTags() {
     try {
-      const res = await fetch('/api/tags/available');
-      const data = await res.json();
+      console.log('🔍 fetchTags 호출');
+      const data = await invoke('get_available_tags');
+      console.log('✅ get_available_tags 응답:', data);
+
       if (data.success) {
+        console.log('📋 categories:', data.definitions.categories);
         setTags(data.definitions.categories);
         setTagColors(data.colors.categories);
+      } else {
+        console.error('❌ success가 false:', data);
       }
     } catch (error) {
-      console.error('태그 로드 실패:', error);
+      console.error('❌ 태그 로드 실패:', error);
     } finally {
       setLoading(false);
     }
@@ -36,13 +42,11 @@ export default function TagManagement() {
     if (!newTagName.trim()) return;
 
     try {
-      const res = await fetch('/api/tags/manage', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'add', tag: newTagName.trim() })
+      const data = await invoke('manage_tag', {
+        action: 'add',
+        tag: newTagName.trim()
       });
 
-      const data = await res.json();
       if (data.success) {
         setNewTagName('');
 
@@ -55,9 +59,8 @@ export default function TagManagement() {
             }
           });
         } else {
-          // 프로젝트 정보가 없으면 태그 목록만 새로고침
+          // 프로젝트 정보가 없으면 태그 목록만 새로고침 (성공 시 alert 제거)
           await fetchTags();
-          alert('✅ 태그가 추가되었습니다!');
         }
       } else {
         alert('❌ 태그 추가 실패: ' + (data.message || '알 수 없는 오류'));
@@ -70,19 +73,15 @@ export default function TagManagement() {
 
   // 태그 삭제
   async function handleDeleteTag(tag) {
-    if (!confirm(`"${tag}" 태그를 삭제하시겠습니까?`)) return;
 
     try {
-      const res = await fetch('/api/tags/manage', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'delete', tag })
+      const data = await invoke('manage_tag', {
+        action: 'delete',
+        tag
       });
 
-      const data = await res.json();
       if (data.success) {
-        await fetchTags(); // 목록 새로고침
-        alert('✅ 태그가 삭제되었습니다!');
+        await fetchTags(); // 목록 새로고침 (성공 시 alert 제거)
       } else {
         if (data.projectsUsingTag) {
           alert(`❌ 이 태그를 사용 중인 프로젝트가 있습니다:\n${data.projectsUsingTag.join(', ')}`);

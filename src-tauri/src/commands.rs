@@ -46,6 +46,29 @@ pub struct SimpleResponse {
     pub message: Option<String>,
 }
 
+#[derive(Debug, Serialize)]
+pub struct ReadmeResponse {
+    pub success: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub content: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message: Option<String>,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TagManageResponse {
+    pub success: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub definitions: Option<TagDefinitions>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub colors: Option<TagColors>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub projects_using_tag: Option<Vec<String>>,
+}
+
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TagManageRequest {
@@ -97,7 +120,7 @@ pub fn get_projects() -> ProjectsResponse {
                 projects: projects_with_tags,
             }
         }
-        Err(e) => ProjectsResponse {
+        Err(_e) => ProjectsResponse {
             success: false,
             count: 0,
             projects: Vec::new(),
@@ -108,8 +131,13 @@ pub fn get_projects() -> ProjectsResponse {
 /// 사용 가능한 모든 태그 반환
 #[command]
 pub fn get_available_tags() -> TagsResponse {
+    println!("🔍 get_available_tags 호출됨");
     let definitions = load_tag_definitions();
     let colors = load_tag_colors();
+
+    println!("✅ 태그 정의 로드: progress={}, categories={}",
+             definitions.progress.len(),
+             definitions.categories.len());
 
     TagsResponse {
         success: true,
@@ -127,39 +155,85 @@ pub fn get_tags(project_name: String) -> Result<ProjectTags, String> {
 /// 특정 프로젝트의 태그 저장
 #[command]
 pub fn save_tags(project_name: String, tags: ProjectTags) -> SimpleResponse {
+    println!("🔍 save_tags 호출됨: project_name={}, tags={:?}", project_name, tags);
+
     match set_project_tags(&project_name, tags) {
-        Ok(_) => SimpleResponse {
-            success: true,
-            message: None,
-        },
-        Err(e) => SimpleResponse {
-            success: false,
-            message: Some(e),
-        },
+        Ok(_) => {
+            println!("✅ 태그 저장 성공: {}", project_name);
+            SimpleResponse {
+                success: true,
+                message: None,
+            }
+        }
+        Err(e) => {
+            println!("❌ 태그 저장 실패: {} - 오류: {}", project_name, e);
+            SimpleResponse {
+                success: false,
+                message: Some(e),
+            }
+        }
     }
 }
 
 /// 전역 태그 추가/삭제
 #[command]
-pub fn manage_tag(action: String, tag: String) -> Result<TagsResponse, String> {
+pub fn manage_tag(action: String, tag: String) -> TagManageResponse {
     match action.as_str() {
-        "add" => {
-            let (definitions, colors) = add_category_tag(&tag)?;
-            Ok(TagsResponse {
+        "add" => match add_category_tag(&tag) {
+            Ok((definitions, colors)) => TagManageResponse {
                 success: true,
-                definitions,
-                colors,
-            })
-        }
-        "delete" => {
-            let (definitions, colors) = delete_category_tag(&tag)?;
-            Ok(TagsResponse {
+                message: None,
+                definitions: Some(definitions),
+                colors: Some(colors),
+                projects_using_tag: None,
+            },
+            Err(e) => TagManageResponse {
+                success: false,
+                message: Some(e),
+                definitions: None,
+                colors: None,
+                projects_using_tag: None,
+            },
+        },
+        "delete" => match delete_category_tag(&tag) {
+            Ok((definitions, colors)) => TagManageResponse {
                 success: true,
-                definitions,
-                colors,
-            })
-        }
-        _ => Err("Invalid action".to_string()),
+                message: None,
+                definitions: Some(definitions),
+                colors: Some(colors),
+                projects_using_tag: None,
+            },
+            Err(e) => {
+                // 에러 메시지에서 프로젝트 목록 추출
+                if e.starts_with("Tag is in use by:") {
+                    // "Tag is in use by: [\"project1\", \"project2\"]" 형태
+                    let projects_str = e.replace("Tag is in use by: ", "");
+                    let projects: Vec<String> = serde_json::from_str(&projects_str).unwrap_or_default();
+                    TagManageResponse {
+                        success: false,
+                        message: Some(e.clone()),
+                        definitions: None,
+                        colors: None,
+                        projects_using_tag: Some(projects),
+                    }
+                } else {
+                    TagManageResponse {
+                        success: false,
+                        message: Some(e),
+                        definitions: None,
+                        colors: None,
+                        projects_using_tag: None,
+                    }
+                }
+            }
+        },
+        _ => TagManageResponse {
+            success: false,
+            message: Some("Invalid action".to_string()),
+            definitions: None,
+            colors: None,
+            projects_using_tag: None,
+        },
     }
 }
 
@@ -270,5 +344,18 @@ pub fn update_settings(settings: AppSettings) -> SimpleResponse {
             success: false,
             message: Some(e),
         },
+    }
+}
+
+/// 사용 설명서 내용 가져오기
+#[command]
+pub fn get_readme() -> ReadmeResponse {
+    // 컴파일 타임에 USER_GUIDE.md 내용을 포함
+    const USER_GUIDE: &str = include_str!("USER_GUIDE.md");
+
+    ReadmeResponse {
+        success: true,
+        content: Some(USER_GUIDE.to_string()),
+        message: None,
     }
 }

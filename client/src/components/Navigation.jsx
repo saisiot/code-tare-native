@@ -50,7 +50,7 @@ export default function Navigation() {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              📖 README
+              📖 사용 설명서
             </Link>
             <Link
               to="/settings"

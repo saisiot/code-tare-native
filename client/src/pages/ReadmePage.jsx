@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { invoke } from '@tauri-apps/api/core';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
@@ -14,18 +15,12 @@ export default function ReadmePage() {
 
   async function fetchReadme() {
     try {
-      const res = await fetch('/api/readme');
-      const data = await res.json();
+      const data = await invoke('get_readme');
 
-      if (data.success) {
-        // 이미지 경로를 서버 경로로 변환
-        const contentWithFixedImages = data.content.replace(
-          /src="docs\/images\//g,
-          'src="http://localhost:3001/docs/images/'
-        );
-        setContent(contentWithFixedImages);
+      if (data.success && data.content) {
+        setContent(data.content);
       } else {
-        setError('README를 불러올 수 없습니다.');
+        setError(data.message || 'README를 불러올 수 없습니다.');
       }
     } catch (err) {
       console.error('Error fetching README:', err);
@@ -38,7 +33,7 @@ export default function ReadmePage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">📖 README 로드 중...</div>
+        <div className="text-xl">📖 사용 설명서 로드 중...</div>
       </div>
     );
   }

@@ -27,6 +27,7 @@ pub fn run() {
       commands::open_project,
       commands::get_settings,
       commands::update_settings,
+      commands::get_readme,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
