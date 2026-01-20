@@ -4,6 +4,9 @@ import { open } from '@tauri-apps/plugin-dialog';
 
 export default function Settings() {
   const [scanPath, setScanPath] = useState('');
+  const [terminalApp, setTerminalApp] = useState('');
+  const [editorCommand, setEditorCommand] = useState('');
+  const [excludedFolders, setExcludedFolders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -15,6 +18,9 @@ export default function Settings() {
     try {
       const settings = await invoke('get_settings');
       setScanPath(settings.scanPath);
+      setTerminalApp(settings.terminalApp);
+      setEditorCommand(settings.editorCommand);
+      setExcludedFolders(settings.excludedFolders || []);
     } catch (error) {
       console.error('Error loading settings:', error);
     } finally {
@@ -46,7 +52,12 @@ export default function Settings() {
     setSaving(true);
     try {
       const result = await invoke('update_settings', {
-        settings: { scanPath }
+        settings: {
+          scanPath,
+          terminalApp,
+          editorCommand,
+          excludedFolders  // 기존 값 유지
+        }
       });
 
       if (result.success) {
@@ -74,32 +85,69 @@ export default function Settings() {
     <div className="max-w-2xl mx-auto p-8">
       <h1 className="text-2xl font-bold mb-6">설정</h1>
 
-      <div className="bg-white rounded-lg shadow p-6">
-        <label className="block mb-2 font-medium">
-          프로젝트 부모 폴더
-        </label>
-        <div className="flex gap-2">
+      <div className="bg-white rounded-lg shadow p-6 space-y-6">
+        {/* 프로젝트 폴더 */}
+        <div>
+          <label className="block mb-2 font-medium">
+            프로젝트 부모 폴더
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={scanPath}
+              readOnly
+              className="flex-1 px-3 py-2 border rounded bg-gray-50"
+            />
+            <button
+              onClick={handleSelectFolder}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            >
+              폴더 선택
+            </button>
+          </div>
+          <p className="text-sm text-gray-500 mt-2">
+            이 폴더의 하위 프로젝트들이 스캔됩니다.
+          </p>
+        </div>
+
+        {/* 터미널 앱 */}
+        <div>
+          <label className="block mb-2 font-medium">
+            터미널 앱
+          </label>
           <input
             type="text"
-            value={scanPath}
-            readOnly
-            className="flex-1 px-3 py-2 border rounded bg-gray-50"
+            value={terminalApp}
+            onChange={(e) => setTerminalApp(e.target.value)}
+            placeholder="예: Warp, iTerm, Terminal"
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <button
-            onClick={handleSelectFolder}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-          >
-            폴더 선택
-          </button>
+          <p className="text-sm text-gray-500 mt-2">
+            Claude 버튼을 눌렀을 때 열릴 터미널 앱 이름 (macOS 애플리케이션 이름)
+          </p>
         </div>
-        <p className="text-sm text-gray-500 mt-2">
-          이 폴더의 하위 프로젝트들이 스캔됩니다.
-        </p>
+
+        {/* 에디터 커맨드 */}
+        <div>
+          <label className="block mb-2 font-medium">
+            에디터 커맨드
+          </label>
+          <input
+            type="text"
+            value={editorCommand}
+            onChange={(e) => setEditorCommand(e.target.value)}
+            placeholder="예: code, cursor, zed"
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <p className="text-sm text-gray-500 mt-2">
+            VS Code 버튼을 눌렀을 때 실행할 커맨드 (PATH에 등록된 커맨드)
+          </p>
+        </div>
 
         <button
           onClick={handleSave}
           disabled={saving}
-          className={`mt-4 px-6 py-2 rounded transition-colors ${
+          className={`w-full px-6 py-2 rounded transition-colors ${
             saving
               ? 'bg-gray-400 cursor-not-allowed'
               : 'bg-green-500 hover:bg-green-600'

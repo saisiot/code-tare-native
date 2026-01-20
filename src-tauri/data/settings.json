@@ -1,3 +1,18 @@
 {
-  "scanPath": "/Users/saisiot/code_workshop"
+  "scanPath": "/Users/saisiot/code_workshop",
+  "terminalApp": "Warp",
+  "editorCommand": "code",
+  "excludedFolders": [
+    "node_modules",
+    ".git",
+    ".cache",
+    "target",
+    "dist",
+    "build",
+    ".next",
+    ".nuxt",
+    "venv",
+    "__pycache__",
+    ".venv"
+  ]
 }

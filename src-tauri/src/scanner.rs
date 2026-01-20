@@ -18,19 +18,8 @@ pub struct Project {
     pub has_ci: bool,
 }
 
-const EXCLUDED_DIRS: &[&str] = &[
-    ".",
-    "..",
-    ".DS_Store",
-    "__pycache__",
-    "node_modules",
-    ".git",
-    ".venv",
-    "venv",
-    ".claude",
-    "_project-dashboard",
-    "code-tare-native",
-];
+// 항상 제외할 디렉토리 (시스템 파일)
+const ALWAYS_EXCLUDED: &[&str] = &[".", "..", ".DS_Store"];
 
 /// README.md에서 설명 추출
 fn extract_description(readme_path: &Path) -> String {
@@ -252,7 +241,7 @@ fn scan_project(project_path: &Path) -> Project {
 }
 
 /// 모든 프로젝트 스캔
-pub fn scan_all_projects(workspace_path: &str) -> Result<Vec<Project>, String> {
+pub fn scan_all_projects(workspace_path: &str, excluded_folders: &[String]) -> Result<Vec<Project>, String> {
     println!("Scanning projects in: {}", workspace_path);
 
     let workspace = Path::new(workspace_path);
@@ -269,7 +258,13 @@ pub fn scan_all_projects(workspace_path: &str) -> Result<Vec<Project>, String> {
         if let Ok(entry) = entry {
             let file_name = entry.file_name().to_string_lossy().to_string();
 
-            if EXCLUDED_DIRS.contains(&file_name.as_str()) {
+            // 시스템 파일 제외
+            if ALWAYS_EXCLUDED.contains(&file_name.as_str()) {
+                continue;
+            }
+
+            // 설정에서 지정한 폴더 제외
+            if excluded_folders.iter().any(|excluded| excluded == &file_name) {
                 continue;
             }
 

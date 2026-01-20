@@ -6,6 +6,9 @@ use std::path::PathBuf;
 #[serde(rename_all = "camelCase")]
 pub struct AppSettings {
     pub scan_path: String,
+    pub terminal_app: String,
+    pub editor_command: String,
+    pub excluded_folders: Vec<String>,
 }
 
 impl Default for AppSettings {
@@ -18,6 +21,21 @@ impl Default for AppSettings {
 
         AppSettings {
             scan_path: default_path,
+            terminal_app: "Warp".to_string(),
+            editor_command: "code".to_string(),
+            excluded_folders: vec![
+                "node_modules".to_string(),
+                ".git".to_string(),
+                ".cache".to_string(),
+                "target".to_string(),
+                "dist".to_string(),
+                "build".to_string(),
+                ".next".to_string(),
+                ".nuxt".to_string(),
+                "venv".to_string(),
+                "__pycache__".to_string(),
+                ".venv".to_string(),
+            ],
         }
     }
 }

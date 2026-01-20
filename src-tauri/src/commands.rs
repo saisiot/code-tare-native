@@ -57,7 +57,7 @@ pub struct TagManageRequest {
 #[command]
 pub fn get_projects() -> ProjectsResponse {
     let settings = load_settings();
-    match scan_all_projects(&settings.scan_path) {
+    match scan_all_projects(&settings.scan_path, &settings.excluded_folders) {
         Ok(projects) => {
             let project_tags = load_project_tags();
 
@@ -166,18 +166,20 @@ pub fn manage_tag(action: String, tag: String) -> Result<TagsResponse, String> {
 /// 프로젝트 열기
 #[command]
 pub async fn open_project(path: String, app: String, url: Option<String>) -> SimpleResponse {
+    let settings = load_settings();
+
     match app.as_str() {
         "claude" => {
-            // Warp 터미널로 폴더 열기
+            // 설정에서 읽은 터미널 앱으로 폴더 열기
             #[cfg(target_os = "macos")]
             {
                 if let Err(e) = std::process::Command::new("open")
-                    .args(&["-a", "Warp", &path])
+                    .args(&["-a", &settings.terminal_app, &path])
                     .spawn()
                 {
                     return SimpleResponse {
                         success: false,
-                        message: Some(format!("Failed to open Warp: {}", e)),
+                        message: Some(format!("Failed to open {}: {}", settings.terminal_app, e)),
                     };
                 }
             }
@@ -188,12 +190,13 @@ pub async fn open_project(path: String, app: String, url: Option<String>) -> Sim
             }
         }
         "vscode" => {
+            // 설정에서 읽은 에디터 커맨드로 폴더 열기
             #[cfg(target_os = "macos")]
             {
-                if let Err(e) = std::process::Command::new("code").arg(&path).spawn() {
+                if let Err(e) = std::process::Command::new(&settings.editor_command).arg(&path).spawn() {
                     return SimpleResponse {
                         success: false,
-                        message: Some(format!("Failed to open VS Code: {}", e)),
+                        message: Some(format!("Failed to open editor: {}", e)),
                     };
                 }
             }
