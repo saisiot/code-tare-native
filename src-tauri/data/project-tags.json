@@ -1,4 +1,12 @@
 {
+  "code-tare-native": {
+    "customTitle": "코드 타래 앱버전 네이티브",
+    "progress": "진행중",
+    "categories": [],
+    "favorite": false,
+    "archived": false,
+    "notes": ""
+  },
   ".claude": {
     "progress": "계획중",
     "categories": [],
