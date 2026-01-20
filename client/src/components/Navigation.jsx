@@ -17,7 +17,7 @@ export default function Navigation() {
           {/* 로고 */}
           <Link to="/" className="flex items-center space-x-2">
             <h1 className="text-2xl font-bold text-blue-600">Code-tare</h1>
-            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">v1.1.0</span>
+            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">v1.0.0</span>
           </Link>
 
           {/* 네비게이션 메뉴 */}
@@ -66,7 +66,7 @@ export default function Navigation() {
 
           {/* GitHub 링크 */}
           <a
-            href="https://github.com/tare/code-tare"
+            href="https://github.com/saisiot/code-tare-native"
             target="_blank"
             rel="noopener noreferrer"
             className="text-gray-600 hover:text-gray-900 transition-colors"
