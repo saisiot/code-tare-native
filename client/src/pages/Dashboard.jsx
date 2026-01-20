@@ -22,12 +22,23 @@ export default function Dashboard() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [tagDefinitions, setTagDefinitions] = useState(null);
   const [tagColors, setTagColors] = useState(null);
+  const [settings, setSettings] = useState(null);
 
   // 프로젝트 로드
   useEffect(() => {
     fetchProjects();
     fetchTagDefinitions();
+    fetchSettings();
   }, []);
+
+  async function fetchSettings() {
+    try {
+      const data = await invoke('get_settings');
+      setSettings(data);
+    } catch (error) {
+      console.error('Error fetching settings:', error);
+    }
+  }
 
   // location.state 감지 및 모달 자동 재개방
   useEffect(() => {
@@ -56,7 +67,22 @@ export default function Dashboard() {
 
   // 검색 및 필터링 적용
   useEffect(() => {
+    if (!settings) return; // 설정 로드 전에는 실행 안 함
+
     let result = [...projects];
+
+    // 아카이브 숨기기
+    if (settings.hideArchived) {
+      result = result.filter(p => !p.tags.archived);
+    }
+
+    // 숨김 프로젝트 필터링 (_나 .으로 시작)
+    if (settings.hideHiddenProjects) {
+      result = result.filter(p => {
+        const name = p.name;
+        return !name.startsWith('_') && !name.startsWith('.');
+      });
+    }
 
     // 검색어 필터링
     if (searchQuery) {
@@ -98,7 +124,7 @@ export default function Dashboard() {
     });
 
     setFilteredProjects(result);
-  }, [projects, searchQuery, filters]);
+  }, [projects, searchQuery, filters, settings]);
 
   async function fetchProjects() {
     try {

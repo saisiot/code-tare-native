@@ -7,6 +7,8 @@ export default function Settings() {
   const [terminalApp, setTerminalApp] = useState('');
   const [editorCommand, setEditorCommand] = useState('');
   const [excludedFolders, setExcludedFolders] = useState([]);
+  const [hideArchived, setHideArchived] = useState(true);
+  const [hideHiddenProjects, setHideHiddenProjects] = useState(true);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [customTerminal, setCustomTerminal] = useState('');
@@ -47,6 +49,8 @@ export default function Settings() {
       }
 
       setExcludedFolders(settings.excludedFolders || []);
+      setHideArchived(settings.hideArchived ?? true);
+      setHideHiddenProjects(settings.hideHiddenProjects ?? true);
     } catch (error) {
       console.error('Error loading settings:', error);
     } finally {
@@ -105,7 +109,9 @@ export default function Settings() {
           scanPath,
           terminalApp: finalTerminalApp,
           editorCommand: finalEditorCommand,
-          excludedFolders  // 기존 값 유지
+          excludedFolders,
+          hideArchived,
+          hideHiddenProjects
         }
       });
 
@@ -215,6 +221,31 @@ export default function Settings() {
           <p className="text-sm text-gray-500 mt-2">
             VS Code 버튼을 눌렀을 때 실행할 커맨드 (PATH에 등록된 커맨드)
           </p>
+        </div>
+
+        {/* 표시 옵션 */}
+        <div className="border-t pt-6">
+          <h3 className="font-medium mb-4">표시 옵션</h3>
+          <div className="space-y-3">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={hideArchived}
+                onChange={(e) => setHideArchived(e.target.checked)}
+                className="w-4 h-4 text-blue-500 rounded focus:ring-2 focus:ring-blue-500"
+              />
+              <span>아카이브된 프로젝트 숨기기</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={hideHiddenProjects}
+                onChange={(e) => setHideHiddenProjects(e.target.checked)}
+                className="w-4 h-4 text-blue-500 rounded focus:ring-2 focus:ring-blue-500"
+              />
+              <span>숨김 프로젝트 가리기 (_, . 시작)</span>
+            </label>
+          </div>
         </div>
 
         <button

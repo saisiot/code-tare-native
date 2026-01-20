@@ -9,6 +9,8 @@ pub struct AppSettings {
     pub terminal_app: String,
     pub editor_command: String,
     pub excluded_folders: Vec<String>,
+    pub hide_archived: bool,
+    pub hide_hidden_projects: bool,
 }
 
 impl Default for AppSettings {
@@ -36,6 +38,8 @@ impl Default for AppSettings {
                 "__pycache__".to_string(),
                 ".venv".to_string(),
             ],
+            hide_archived: true,
+            hide_hidden_projects: true,
         }
     }
 }
