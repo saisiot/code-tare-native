@@ -90,6 +90,13 @@ export default function Dashboard() {
       result = result.filter(p => p.tags.favorite);
     }
 
+    // 최종 수정일 기준 내림차순 정렬 (최신순)
+    result.sort((a, b) => {
+      const dateA = new Date(a.lastModified);
+      const dateB = new Date(b.lastModified);
+      return dateB - dateA;
+    });
+
     setFilteredProjects(result);
   }, [projects, searchQuery, filters]);
 
