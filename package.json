@@ -1,0 +1,42 @@
+{
+  "name": "code-tare",
+  "version": "1.1.0",
+  "description": "Code-tare: 로컬 프로젝트 관리 대시보드 - 프로젝트 자동 스캔, 태그 관리, 빠른 실행",
+  "type": "module",
+  "scripts": {
+    "install-all": "cd server && npm install && cd ../client && npm install",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "build": "cd client && npm run build",
+    "start": "cd server && npm start",
+    "start:prod": "npm run build && npm run start"
+  },
+  "keywords": [
+    "project-management",
+    "dashboard",
+    "local-projects",
+    "tags",
+    "developer-tools"
+  ],
+  "author": {
+    "name": "tare from the better",
+    "url": "https://github.com/tare"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tare/code-tare.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tare/code-tare/issues"
+  },
+  "homepage": "https://github.com/tare/code-tare#readme",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

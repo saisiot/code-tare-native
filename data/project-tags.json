@@ -1,0 +1,104 @@
+{
+  "2601_epub_translator": {
+    "customTitle": "이북 번역기(gemini flash)",
+    "progress": "진행중",
+    "categories": [
+      "문서변환"
+    ],
+    "favorite": false,
+    "archived": false,
+    "notes": ""
+  },
+  "manage": {
+    "action": "add",
+    "tag": "최종테스트999"
+  },
+  "26_3211_tiktokdn": {
+    "progress": "계획중",
+    "categories": [],
+    "favorite": false,
+    "archived": false,
+    "notes": ""
+  },
+  "fleet_note_maker_raycast": {
+    "progress": "완료",
+    "categories": [],
+    "favorite": false,
+    "archived": false,
+    "notes": ""
+  },
+  "journal_maker_raycast": {
+    "progress": "완료",
+    "categories": [],
+    "favorite": false,
+    "archived": false,
+    "notes": ""
+  },
+  "stock-scrapper-2511": {
+    "progress": "진행중",
+    "categories": [],
+    "favorite": false,
+    "archived": false,
+    "notes": ""
+  },
+  "jinken-2511": {
+    "progress": "deprecated",
+    "categories": [],
+    "favorite": false,
+    "archived": false,
+    "notes": ""
+  },
+  "mkt-ai-2511": {
+    "customTitle": null,
+    "progress": "진행중",
+    "categories": [],
+    "favorite": false,
+    "archived": false,
+    "notes": ""
+  },
+  "obsidian-rag-mcp": {
+    "customTitle": null,
+    "progress": "진행중",
+    "categories": [
+      "obsidian"
+    ],
+    "favorite": false,
+    "archived": false,
+    "notes": ""
+  },
+  "obsidian-scrap-2510": {
+    "customTitle": null,
+    "progress": "진행중",
+    "categories": [
+      "자동화",
+      "obsidian"
+    ],
+    "favorite": false,
+    "archived": false,
+    "notes": ""
+  },
+  "mogak-bot-fork": {
+    "customTitle": null,
+    "progress": "진행중",
+    "categories": [
+      "봇"
+    ],
+    "favorite": false,
+    "archived": false,
+    "notes": ""
+  },
+  "obsidian_system_deploy": {
+    "customTitle": "옵시디언 데모용 시스템(github)",
+    "progress": "완료",
+    "categories": [
+      "봇",
+      "지식관리",
+      "obsidian",
+      "자동화",
+      "스크래퍼"
+    ],
+    "favorite": false,
+    "archived": false,
+    "notes": ""
+  }
+}
