@@ -81,14 +81,36 @@
 
 ### 방법 1: 릴리즈에서 다운로드 (권장)
 
-1. [Releases 페이지](https://github.com/tare/code-tare-native/releases)에서 최신 `Code-tare.app.zip` 다운로드
+1. [Releases 페이지](https://github.com/saisiot/code-tare-native/releases)에서 최신 `Code-tare-v1.0.0-macos.zip` 다운로드
 2. 압축 해제 후 `Code-tare.app`을 Applications 폴더로 이동
-3. 더블클릭으로 실행!
+3. **중요**: 터미널에서 다음 명령어 실행 (quarantine 속성 제거)
+   ```bash
+   xattr -c /Applications/Code-tare.app
+   ```
+4. 더블클릭으로 실행!
 
-**첫 실행 시:**
-- "확인되지 않은 개발자..." 경고가 나타나면:
-  - `시스템 설정 > 개인 정보 보호 및 보안 > 보안` 에서 "확인 없이 열기" 클릭
-  - 또는 앱에 우클릭 → "열기" 선택
+**⚠️ "Code-tare is damaged" 에러가 나타나는 경우:**
+
+이것은 앱이 코드 서명되지 않아서 발생하는 macOS 보안 경고입니다. 다음 방법으로 해결:
+
+**방법 A: 터미널 명령어 (권장)**
+```bash
+# quarantine 속성 제거
+xattr -c /Applications/Code-tare.app
+
+# 또는 다운로드 폴더에 있다면
+xattr -c ~/Downloads/Code-tare.app
+```
+
+**방법 B: Finder에서**
+1. 앱에 우클릭 (또는 Control + 클릭)
+2. "열기" 선택
+3. 경고창에서 "열기" 클릭
+
+**방법 C: 시스템 설정**
+1. 앱 실행 시도 (에러 발생)
+2. `시스템 설정 > 개인 정보 보호 및 보안 > 보안` 이동
+3. "확인 없이 열기" 버튼 클릭
 
 ### 방법 2: 소스에서 빌드
 
