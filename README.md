@@ -327,9 +327,9 @@ cargo clippy
 
 ## 👤 제작자
 
-**tare from the better**
-- GitHub: [@tare](https://github.com/tare)
-- 웹 버전: [code-tare](https://github.com/tare/code-tare)
+**saisiot**
+- GitHub: [@saisiot](https://github.com/saisiot)
+- 웹 버전: [code-tare](https://github.com/saisiot/code-tare)
 
 ## 📝 라이선스
 
@@ -337,4 +337,4 @@ MIT License - 자유롭게 사용, 수정, 배포 가능
 
 ---
 
-Made with ❤️ by tare from the better using Claude Code & Tauri
+Made with ❤️ by saisiot using Claude Code & Tauri

@@ -1,7 +1,7 @@
 {
-  "name": "code-tare",
-  "version": "1.1.0",
-  "description": "Code-tare: 로컬 프로젝트 관리 대시보드 - 프로젝트 자동 스캔, 태그 관리, 빠른 실행",
+  "name": "code-tare-native",
+  "version": "1.0.0",
+  "description": "Code-tare Native: 로컬 프로젝트 관리 macOS 네이티브 앱 - Tauri 기반",
   "type": "module",
   "scripts": {
     "install-all": "cd server && npm install && cd ../client && npm install",
@@ -20,18 +20,18 @@
     "developer-tools"
   ],
   "author": {
-    "name": "tare from the better",
-    "url": "https://github.com/tare"
+    "name": "saisiot",
+    "url": "https://github.com/saisiot"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tare/code-tare.git"
+    "url": "https://github.com/saisiot/code-tare-native.git"
   },
   "bugs": {
-    "url": "https://github.com/tare/code-tare/issues"
+    "url": "https://github.com/saisiot/code-tare-native/issues"
   },
-  "homepage": "https://github.com/tare/code-tare#readme",
+  "homepage": "https://github.com/saisiot/code-tare-native#readme",
   "devDependencies": {
     "concurrently": "^8.2.2"
   },
