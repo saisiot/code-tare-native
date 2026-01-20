@@ -9,22 +9,68 @@ export default function Settings() {
   const [excludedFolders, setExcludedFolders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [customTerminal, setCustomTerminal] = useState('');
+  const [customEditor, setCustomEditor] = useState('');
+  const [showCustomTerminal, setShowCustomTerminal] = useState(false);
+  const [showCustomEditor, setShowCustomEditor] = useState(false);
 
   useEffect(() => {
     loadSettings();
   }, []);
 
+  const terminalOptions = ['Warp', 'iTerm', 'Terminal', 'Alacritty', 'Kitty'];
+  const editorOptions = ['code', 'cursor', 'zed', 'subl', 'atom', 'nvim'];
+
   async function loadSettings() {
     try {
       const settings = await invoke('get_settings');
       setScanPath(settings.scanPath);
-      setTerminalApp(settings.terminalApp);
-      setEditorCommand(settings.editorCommand);
+
+      // 터미널 앱 설정
+      if (terminalOptions.includes(settings.terminalApp)) {
+        setTerminalApp(settings.terminalApp);
+        setShowCustomTerminal(false);
+      } else {
+        setTerminalApp('custom');
+        setCustomTerminal(settings.terminalApp);
+        setShowCustomTerminal(true);
+      }
+
+      // 에디터 커맨드 설정
+      if (editorOptions.includes(settings.editorCommand)) {
+        setEditorCommand(settings.editorCommand);
+        setShowCustomEditor(false);
+      } else {
+        setEditorCommand('custom');
+        setCustomEditor(settings.editorCommand);
+        setShowCustomEditor(true);
+      }
+
       setExcludedFolders(settings.excludedFolders || []);
     } catch (error) {
       console.error('Error loading settings:', error);
     } finally {
       setLoading(false);
+    }
+  }
+
+  function handleTerminalChange(value) {
+    setTerminalApp(value);
+    if (value === 'custom') {
+      setShowCustomTerminal(true);
+    } else {
+      setShowCustomTerminal(false);
+      setCustomTerminal('');
+    }
+  }
+
+  function handleEditorChange(value) {
+    setEditorCommand(value);
+    if (value === 'custom') {
+      setShowCustomEditor(true);
+    } else {
+      setShowCustomEditor(false);
+      setCustomEditor('');
     }
   }
 
@@ -51,11 +97,14 @@ export default function Settings() {
   async function handleSave() {
     setSaving(true);
     try {
+      const finalTerminalApp = showCustomTerminal ? customTerminal : terminalApp;
+      const finalEditorCommand = showCustomEditor ? customEditor : editorCommand;
+
       const result = await invoke('update_settings', {
         settings: {
           scanPath,
-          terminalApp,
-          editorCommand,
+          terminalApp: finalTerminalApp,
+          editorCommand: finalEditorCommand,
           excludedFolders  // 기존 값 유지
         }
       });
@@ -115,13 +164,25 @@ export default function Settings() {
           <label className="block mb-2 font-medium">
             터미널 앱
           </label>
-          <input
-            type="text"
+          <select
             value={terminalApp}
-            onChange={(e) => setTerminalApp(e.target.value)}
-            placeholder="예: Warp, iTerm, Terminal"
+            onChange={(e) => handleTerminalChange(e.target.value)}
             className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          >
+            {terminalOptions.map(option => (
+              <option key={option} value={option}>{option}</option>
+            ))}
+            <option value="custom">기타 (직접 입력)</option>
+          </select>
+          {showCustomTerminal && (
+            <input
+              type="text"
+              value={customTerminal}
+              onChange={(e) => setCustomTerminal(e.target.value)}
+              placeholder="터미널 앱 이름 입력"
+              className="w-full px-3 py-2 border rounded mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          )}
           <p className="text-sm text-gray-500 mt-2">
             Claude 버튼을 눌렀을 때 열릴 터미널 앱 이름 (macOS 애플리케이션 이름)
           </p>
@@ -132,13 +193,25 @@ export default function Settings() {
           <label className="block mb-2 font-medium">
             에디터 커맨드
           </label>
-          <input
-            type="text"
+          <select
             value={editorCommand}
-            onChange={(e) => setEditorCommand(e.target.value)}
-            placeholder="예: code, cursor, zed"
+            onChange={(e) => handleEditorChange(e.target.value)}
             className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          >
+            {editorOptions.map(option => (
+              <option key={option} value={option}>{option}</option>
+            ))}
+            <option value="custom">기타 (직접 입력)</option>
+          </select>
+          {showCustomEditor && (
+            <input
+              type="text"
+              value={customEditor}
+              onChange={(e) => setCustomEditor(e.target.value)}
+              placeholder="에디터 커맨드 입력"
+              className="w-full px-3 py-2 border rounded mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          )}
           <p className="text-sm text-gray-500 mt-2">
             VS Code 버튼을 눌렀을 때 실행할 커맨드 (PATH에 등록된 커맨드)
           </p>
