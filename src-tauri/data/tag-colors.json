@@ -1,0 +1,23 @@
+{
+  "progress": {
+    "중지": "bg-gray-100 text-gray-800 border-gray-300",
+    "deprecated": "bg-red-100 text-red-800 border-red-300",
+    "진행중": "bg-green-100 text-green-800 border-green-300",
+    "완료": "bg-blue-100 text-blue-800 border-blue-300",
+    "계획중": "bg-orange-100 text-orange-800 border-orange-300"
+  },
+  "categories": {
+    "default": "bg-gray-100 text-gray-600",
+    "데이터수집": "bg-teal-100 text-teal-800",
+    "지식관리": "bg-amber-100 text-amber-800",
+    "웹앱": "bg-indigo-100 text-indigo-800",
+    "자동화": "bg-cyan-100 text-cyan-800",
+    "CLI": "bg-slate-100 text-slate-800",
+    "봇": "bg-pink-100 text-pink-800",
+    "스크래퍼": "bg-orange-100 text-orange-800",
+    "Obsidian": "bg-violet-100 text-violet-800",
+    "AI": "bg-purple-100 text-purple-800",
+    "에이전트": "bg-fuchsia-100 text-fuchsia-800",
+    "문서변환": "bg-emerald-100 text-emerald-800"
+  }
+}
