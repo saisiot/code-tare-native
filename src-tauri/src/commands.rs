@@ -1,4 +1,5 @@
 use crate::scanner::scan_all_projects;
+use crate::settings::{load_settings, save_settings, AppSettings};
 use crate::tags::{
     add_category_tag, delete_category_tag, get_project_tags, load_project_tags,
     load_tag_colors, load_tag_definitions, set_project_tags, ProjectTags,
@@ -54,8 +55,9 @@ pub struct TagManageRequest {
 
 /// 모든 프로젝트 목록 반환
 #[command]
-pub fn get_projects(scan_path: String) -> ProjectsResponse {
-    match scan_all_projects(&scan_path) {
+pub fn get_projects() -> ProjectsResponse {
+    let settings = load_settings();
+    match scan_all_projects(&settings.scan_path) {
         Ok(projects) => {
             let project_tags = load_project_tags();
 
@@ -243,6 +245,27 @@ pub async fn open_project(path: String, app: String, url: Option<String>) -> Sim
         _ => SimpleResponse {
             success: false,
             message: Some("Unknown application".to_string()),
+        },
+    }
+}
+
+/// 설정 가져오기
+#[command]
+pub fn get_settings() -> AppSettings {
+    load_settings()
+}
+
+/// 설정 업데이트
+#[command]
+pub fn update_settings(settings: AppSettings) -> SimpleResponse {
+    match save_settings(&settings) {
+        Ok(_) => SimpleResponse {
+            success: true,
+            message: None,
+        },
+        Err(e) => SimpleResponse {
+            success: false,
+            message: Some(e),
         },
     }
 }

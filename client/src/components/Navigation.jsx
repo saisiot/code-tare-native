@@ -52,6 +52,16 @@ export default function Navigation() {
             >
               📖 README
             </Link>
+            <Link
+              to="/settings"
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                isActive('/settings')
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              ⚙️ 설정
+            </Link>
           </div>
 
           {/* GitHub 링크 */}

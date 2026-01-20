@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { invoke } from '@tauri-apps/api/core';
 import ProjectCard from '../components/ProjectCard';
 import SearchBar from '../components/SearchBar';
 import FilterPanel from '../components/FilterPanel';
@@ -94,8 +95,7 @@ export default function Dashboard() {
 
   async function fetchProjects() {
     try {
-      const res = await fetch('/api/projects');
-      const data = await res.json();
+      const data = await invoke('get_projects');
       if (data.success) {
         setProjects(data.projects);
         setFilteredProjects(data.projects);
@@ -109,8 +109,7 @@ export default function Dashboard() {
 
   async function fetchTagDefinitions() {
     try {
-      const res = await fetch('/api/tags/available');
-      const data = await res.json();
+      const data = await invoke('get_available_tags');
       if (data.success) {
         setTagDefinitions(data.definitions);
         setTagColors(data.colors);
@@ -132,13 +131,7 @@ export default function Dashboard() {
 
   async function handleSaveTags(projectName, tags) {
     try {
-      const res = await fetch(`/api/tags/${projectName}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(tags)
-      });
-
-      const data = await res.json();
+      const data = await invoke('save_tags', { projectName, tags });
       if (data.success) {
         // 프로젝트 목록 업데이트
         setProjects(prev => prev.map(p =>
@@ -154,11 +147,7 @@ export default function Dashboard() {
   async function handleRescan() {
     setLoading(true);
     try {
-      const res = await fetch('/api/projects/scan', { method: 'POST' });
-      const data = await res.json();
-      if (data.success) {
-        await fetchProjects();
-      }
+      await fetchProjects();
     } catch (error) {
       console.error('Error rescanning projects:', error);
     } finally {

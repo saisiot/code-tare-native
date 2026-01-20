@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { invoke } from '@tauri-apps/api/core';
 
 export default function ProjectCard({ project, tagColors, onOpenTagEditor }) {
   const [showProgressMenu, setShowProgressMenu] = useState(false);
@@ -19,13 +20,11 @@ export default function ProjectCard({ project, tagColors, onOpenTagEditor }) {
         progress: newProgress
       };
 
-      const res = await fetch(`/api/tags/${project.name}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedTags)
+      const data = await invoke('save_tags', {
+        projectName: project.name,
+        tags: updatedTags
       });
 
-      const data = await res.json();
       if (data.success) {
         // 성공 시 페이지 새로고침하거나 부모 컴포넌트에 알림
         window.location.reload();
@@ -43,24 +42,16 @@ export default function ProjectCard({ project, tagColors, onOpenTagEditor }) {
 
   async function openProject(app) {
     try {
-      const body = {
+      const url = (app === 'github' && project.gitRemote) ? project.gitRemote : null;
+
+      const data = await invoke('open_project', {
         path: project.path,
-        app: app
-      };
-
-      if (app === 'github' && project.gitRemote) {
-        body.url = project.gitRemote;
-      }
-
-      const res = await fetch('/api/projects/open', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+        app: app,
+        url: url
       });
 
-      const data = await res.json();
-      if (!data.success) {
-        alert(`오류: ${data.error}`);
+      if (!data.success && data.message) {
+        alert(`오류: ${data.message}`);
       }
     } catch (error) {
       console.error('Error opening project:', error);

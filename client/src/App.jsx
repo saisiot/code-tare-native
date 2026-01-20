@@ -3,6 +3,7 @@ import Navigation from './components/Navigation';
 import Dashboard from './pages/Dashboard';
 import TagManagement from './pages/TagManagement';
 import ReadmePage from './pages/ReadmePage';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/tags" element={<TagManagement />} />
         <Route path="/readme" element={<ReadmePage />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </div>
   );

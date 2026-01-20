@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { invoke } from '@tauri-apps/api/core';
 
 export default function TagEditor({
   project,
@@ -35,16 +36,11 @@ export default function TagEditor({
     if (!newCategoryTag.trim()) return;
 
     try {
-      const res = await fetch('/api/tags/manage', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'add',
-          tag: newCategoryTag.trim()
-        })
+      const data = await invoke('manage_tag', {
+        action: 'add',
+        tag: newCategoryTag.trim()
       });
 
-      const data = await res.json();
       if (data.success) {
         alert('새 구분 태그가 추가되었습니다!');
         setNewCategoryTag('');
@@ -56,12 +52,10 @@ export default function TagEditor({
 
         // 새로 추가된 태그를 자동으로 선택
         setCategories([...categories, newCategoryTag.trim()]);
-      } else {
-        alert(data.message || '태그 추가 실패');
       }
     } catch (error) {
       console.error('Error adding category:', error);
-      alert('태그 추가 중 오류가 발생했습니다.');
+      alert(error || '태그 추가 중 오류가 발생했습니다.');
     }
   }
 
